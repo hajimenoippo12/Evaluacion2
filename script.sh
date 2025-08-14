@@ -1,20 +1,16 @@
-echo "FROM ubuntu:22.04" > Dockerfile
+FROM ubuntu:22.04
 
-echo "RUN apt-get update && \
+RUN apt-get update && \
     apt-get install -y --no-install-recommends apache2 && \
     apt-get clean && \
-    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*" >> Dockerfile
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-echo "COPY index.html /var/www/html/" >> Dockerfile
+COPY index.html /var/www/html/
 
-# Cambiar Apache a puerto 8888
-echo "RUN sed -i 's/80/8888/g' /etc/apache2/ports.conf && \
-    sed -i 's/:80/:8888/g' /etc/apache2/sites-enabled/000-default.conf" >> Dockerfile
+# Cambiar Apache a puerto 8888 de forma segura
+RUN sed -i 's/Listen 80/Listen 8888/' /etc/apache2/ports.conf && \
+    sed -i 's/<VirtualHost \*:80>/<VirtualHost *:8888>/' /etc/apache2/sites-enabled/000-default.conf
 
-echo "EXPOSE 8888" >> Dockerfile
+EXPOSE 8888
 
-echo 'CMD ["apache2ctl", "-D", "FOREGROUND"]' >> Dockerfile
-
-docker build -t web2 .
-docker run -t -d -p 8888:8888 --name web2 web2
-docker ps -a
+CMD ["apache2ctl", "-D", "FOREGROUND"]
