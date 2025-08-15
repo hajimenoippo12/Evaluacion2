@@ -9,5 +9,5 @@ echo "FROM ubuntu:22.04" > Dockerfile
    echo 'CMD ["apache2ctl", "-D", "FOREGROUND"]' >> Dockerfile
   
   docker build -t web2 .
-  docker run -t -d -p 80:8888 --name web2 web2
+  docker run -d -p 8888:80 --name web2 web2
   docker ps -a
